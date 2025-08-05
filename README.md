@@ -1,2 +1,2 @@
 # lode
-university projct
+university project
