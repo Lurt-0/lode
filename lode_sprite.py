@@ -7,6 +7,7 @@ class Lode_sprite(Sprite):
         self.color_selected = pygame.Color(127, 255, 127)
         self.color_hover = pygame.Color("green")
         self.selected = False
+        self.boat_start = False
         self.hover = False
         self.boat_p1 = False
         self.boat_p2 = False
@@ -15,6 +16,8 @@ class Lode_sprite(Sprite):
 
     def update(self):
         if self.selected:
+            self.image = self.create_img(self.rect, self.color_selected, self.text)
+        elif self.boat_start:
             self.image = self.create_img(self.rect, self.color_selected, self.text)
         elif self.hover:
             self.image = self.create_img(self.rect, self.color_hover, self.text)
