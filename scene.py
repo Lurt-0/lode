@@ -1,7 +1,6 @@
 import pygame
 from collections.abc import Callable
 
-
 class Scene:
     def __init__(self, switch:Callable[[int],None]):
         self.switch_scenes = switch
@@ -11,6 +10,14 @@ class Scene:
         for x in self.sprites:
             if x.rect.collidepoint(pos):
                 x.on_click(x)
+
+    def button_base(self, x):
+        x.color = "blue"
+        x.text_size = 120
+
+    def button_hover(self, x):
+        x.color = "red"
+        x.text_size = 130
 
     def draw(self, screen):
         screen.fill("black")
