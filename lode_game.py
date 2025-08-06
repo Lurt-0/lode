@@ -51,6 +51,10 @@ class Lode(Scene):
                 else:
                     self.selected_tile = None
                     x.selected = True
+                    if self.active_boat_list is self.boats_list_p1:
+                        x.boat_p1 = list
+                    else:
+                        x.boat_p2 = list
             if len(list) > 1:
                 self.active_boat_list[len(list)] -= 1
                 if sum(self.active_boat_list) == 0:
@@ -61,8 +65,14 @@ class Lode(Scene):
             if not tile.p1_shot:
                 tile.p1_shot = True
                 tile.selected = True
-                if tile.boat_p2:
+                if tile.p2:
                     tile.color_selected = pygame.Color(127, 255, 127)
+                    full = True
+                    for x in tile.boat_p2:
+                        if x.selected is False:
+                            full = False
+                    if full:
+                        self.button_next_display("boat sunk")
                 else:
                     tile.color_selected = pygame.Color(255, 127, 127)
                     self.button_next_display("player 2 is now playing")
@@ -70,7 +80,7 @@ class Lode(Scene):
                     for x in self.tiles:
                         if x.p2_shot:
                             x.selected = True
-                            if x.boat_p1:
+                            if x.p1:
                                 x.color_selected = pygame.Color(127, 255, 127)
                             else: x.color_selected = pygame.Color(255, 127, 127)
                         else: x.selected = False
@@ -78,8 +88,14 @@ class Lode(Scene):
             if not tile.p2_shot:
                 tile.p2_shot = True
                 tile.selected = True
-                if tile.boat_p1:
+                if tile.p1:
                     tile.color_selected = pygame.Color(127, 255, 127)
+                    full = True
+                    for x in tile.boat_p1:
+                        if x.selected is False:
+                            full = False
+                    if full:
+                        self.button_next_display("boat sunk")
                 else:
                     tile.color_selected = pygame.Color(255, 127, 127)
                     self.button_next_display("player 1 is now playing")
@@ -87,7 +103,7 @@ class Lode(Scene):
                     for x in self.tiles:
                         if x.p1_shot:
                             x.selected = True
-                            if x.boat_p2:
+                            if x.p2:
                                 x.color_selected = pygame.Color(127, 255, 127)
                             else: x.color_selected = pygame.Color(255, 127, 127)
                         else: x.selected = False
@@ -111,6 +127,10 @@ class Lode(Scene):
                 if 0 <= (x + 10*y + (length-1)*direction) < 100:
                     for x in (list := self.can_place_boat(self.tiles_list[x + 10*y], self.tiles_list[x + 10*y + (length-1)*direction])):
                         x.selected = True
+                        if self.active_boat_list is self.boats_list_p1:
+                            x.boat_p1 = list
+                        else: x.boat_p2 = list
+
                     if len(list) > 1:
                         self.active_boat_list[length] -= 1
         self.next()
@@ -124,13 +144,13 @@ class Lode(Scene):
                 for x in self.tiles:
                     self.button_next_display("player 2 is now placing")
                     if x.selected == True:
-                        x.boat_p1 = True
+                        x.p1 = True
                         x.boat_start = False
                         x.selected = False
         else:
             for x in self.tiles:
                 if x.selected == True:
-                    x.boat_p2 = True
+                    x.p2 = True
                     x.boat_start = False
                     x.selected = False
             self.start_game()

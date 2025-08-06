@@ -1,6 +1,6 @@
 import pygame
 from menu import Menu
-from lode import Lode
+from lode_game import Lode
 
 class Game:
     def __init__(self):

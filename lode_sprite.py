@@ -7,10 +7,12 @@ class Lode_sprite(Sprite):
         self.color_selected = pygame.Color(127, 255, 127)
         self.color_hover = pygame.Color("green")
         self.selected = False
+        self.boat_p1 = None
+        self.boat_p2 = None
         self.boat_start = False
         self.hover = False
-        self.boat_p1 = False
-        self.boat_p2 = False
+        self.p1 = False
+        self.p2 = False
         self.p1_shot = False
         self.p2_shot = False
         self.x = x
