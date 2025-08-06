@@ -11,13 +11,13 @@ class Lode_sprite(Sprite):
         self.hover = False
         self.boat_p1 = False
         self.boat_p2 = False
+        self.p1_shot = False
+        self.p2_shot = False
         self.x = x
         self.y = y
 
     def update(self):
-        if self.selected:
-            self.image = self.create_img(self.rect, self.color_selected, self.text)
-        elif self.boat_start:
+        if self.selected or self.boat_start:
             self.image = self.create_img(self.rect, self.color_selected, self.text)
         elif self.hover:
             self.image = self.create_img(self.rect, self.color_hover, self.text)
