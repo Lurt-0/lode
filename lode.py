@@ -14,8 +14,7 @@ class Lode(Scene):
         self.boats_list_p1 = [0,1,2,1,1,0,0,0,0,0]
         self.boats_list_p2 = [0,1,2,1,1,0,0,0,0,0]
         self.active_boat_list = self.boats_list_p1
-        self.button_next_text = "Další"
-        self.button_next = Sprite(pygame.Rect(460, 100, 1000, 200), self.button_next_click, self.button_hover,self.button_base, self.button_next_text)
+        self.button_next = Sprite(pygame.Rect(460, 100, 1000, 200), self.button_next_click, self.button_hover,self.button_base, "Další")
         self.sprites.add(Sprite(pygame.Rect(10, 10, 210, 100), self.menu, self.button_hover, self.button_base, "Menu"))
         self.sprites.add(Sprite(pygame.Rect(10, 120, 210, 100), self.debug, self.button_hover, self.button_base, "Dál"))
 
@@ -68,7 +67,6 @@ class Lode(Scene):
                         x.boat_start = False
                         x.selected = False
         else:
-            self.button_next_text = "Hrát"
             for x in self.tiles:
                 if x.selected == True:
                     x.boat_p2 = True
