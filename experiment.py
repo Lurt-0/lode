@@ -17,7 +17,7 @@ class Game:
         elif id == 1:
             self.active_scene = Lode(self.load_scene)
         elif id == 2:
-            self.active_scene = Menu(self.load_scene)
+            self.active_scene = Lode(self.load_scene, True)
 
     def run(self):
         while True:
