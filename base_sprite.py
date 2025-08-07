@@ -1,7 +1,7 @@
 import pygame
 
 class Sprite(pygame.sprite.Sprite):
-    def __init__(self, rect:pygame.Rect ,on_click = lambda x: None,on_hover = lambda x: None,not_hover = lambda x: None, text:str = ""):
+    def __init__(self, rect:pygame.Rect ,on_click = lambda x = None: None,on_hover = lambda x = None: None,not_hover = lambda x = None: None, text:str = ""):
         super().__init__()
         self.on_click = on_click
         self.on_hover = on_hover

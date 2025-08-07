@@ -33,3 +33,6 @@ class Scene:
 
     def quit(self, x):
         raise SystemExit
+
+    def menu(self, tile):
+        self.switch_scenes(0)

@@ -11,10 +11,12 @@ class Lode(Scene):
         self.selected_tile = None
         self.ai = ai
         self.player = 1
+        self.other_player = 2
         self.tiles = pygame.sprite.Group()
         self.tiles_list = [None]*100
         self.boats_list_p1 = [0,0,1,2,1,1,0,0,0,0,0]
         self.boats_list_p2 = [0,0,1,2,1,1,0,0,0,0,0]
+        self.sunk = [0,0]
         self.active_boat_list = self.boats_list_p1
         self.button_next = Sprite(pygame.Rect(460, 100, 1000, 200), self.button_next_click, self.button_hover,self.button_base, "Další")
         self.load_sprites()
@@ -43,7 +45,7 @@ class Lode(Scene):
                 x.hover = False
 
     def selection_tile_click(self, tile):
-        if tile.selected is False and self.neighbour_selected(tile) is False:
+        if not tile.selected and not self.neighbours_selected(tile):
             for x in (list := self.can_place_boat(tile, self.selected_tile)):
                 if  len(list) == 1:
                     self.selected_tile = x
@@ -51,67 +53,49 @@ class Lode(Scene):
                 else:
                     self.selected_tile = None
                     x.selected = True
-                    if self.active_boat_list is self.boats_list_p1:
-                        x.boat_p1 = list
-                    else:
-                        x.boat_p2 = list
+                    x.boat_for_player[self.player - 1] = list
             if len(list) > 1:
                 self.active_boat_list[len(list)] -= 1
                 if sum(self.active_boat_list) == 0:
                     self.next()
 
     def game_tile_click(self, tile):
-        if self.player == 1:
-            if not tile.p1_shot:
-                tile.p1_shot = True
-                tile.selected = True
-                if tile.p2:
-                    tile.color_selected = pygame.Color(127, 255, 127)
-                    full = True
-                    for x in tile.boat_p2:
-                        if x.selected is False:
-                            full = False
-                    if full:
-                        self.button_next_display("boat sunk")
-                else:
-                    tile.color_selected = pygame.Color(255, 127, 127)
-                    self.button_next_display("player 2 is now playing")
-                    self.player = 2
-                    for x in self.tiles:
-                        if x.p2_shot:
-                            x.selected = True
-                            if x.p1:
-                                x.color_selected = pygame.Color(127, 255, 127)
-                            else: x.color_selected = pygame.Color(255, 127, 127)
-                        else: x.selected = False
-        else:
-            if not tile.p2_shot:
-                tile.p2_shot = True
-                tile.selected = True
-                if tile.p1:
-                    tile.color_selected = pygame.Color(127, 255, 127)
-                    full = True
-                    for x in tile.boat_p1:
-                        if x.selected is False:
-                            full = False
-                    if full:
-                        self.button_next_display("boat sunk")
-                else:
-                    tile.color_selected = pygame.Color(255, 127, 127)
-                    self.button_next_display("player 1 is now playing")
-                    self.player = 1
-                    for x in self.tiles:
-                        if x.p1_shot:
-                            x.selected = True
-                            if x.p2:
-                                x.color_selected = pygame.Color(127, 255, 127)
-                            else: x.color_selected = pygame.Color(255, 127, 127)
-                        else: x.selected = False
+        if not tile.player_shot[self.player - 1]:
+            tile.player_shot[self.player - 1] = True
+            tile.selected = True
+            if tile.is_boat_tile[self.other_player - 1]:
+                tile.color_selected = pygame.Color(127, 255, 127)
+                sunk = True
+                for x in tile.boat_for_player[self.other_player - 1]:
+                    if x.selected is False:
+                        sunk = False
+                if sunk:
+                    self.button_next_display("boat sunk")
+                    for x in tile.boat_for_player[self.other_player - 1]:
+                        for y in self.neighbours(x):
+                            y.selected = True
+                            y.player_shot[self.player - 1] = True
+                            if not y.is_boat_tile[self.other_player - 1]:
+                                y.color_selected = pygame.Color(255, 127, 127)
+                    self.sunk[self.player - 1] += 1
+                    if self.sunk[self.player - 1] == 5:
+                        self.switch_scenes(0)
 
-    def menu(self, x):
-        self.switch_scenes(0)
+            else:
+                tile.color_selected = pygame.Color(255, 127, 127)
+                self.button_next_display(f"player {self.other_player} is now playing")
+                for x in self.tiles:
+                    if x.player_shot[self.other_player - 1]:
+                        x.selected = True
+                        if x.is_boat_tile[self.player - 1]:
+                            x.color_selected = pygame.Color(127, 255, 127)
+                        else:
+                            x.color_selected = pygame.Color(255, 127, 127)
+                    else:
+                        x.selected = False
+                self.player, self.other_player = self.other_player, self.player
 
-    def debug(self, x):
+    def debug(self, tile):
         self.ai_selection()
 
     def ai_selection(self):
@@ -127,34 +111,27 @@ class Lode(Scene):
                 if 0 <= (x + 10*y + (length-1)*direction) < 100:
                     for x in (list := self.can_place_boat(self.tiles_list[x + 10*y], self.tiles_list[x + 10*y + (length-1)*direction])):
                         x.selected = True
-                        if self.active_boat_list is self.boats_list_p1:
-                            x.boat_p1 = list
-                        else: x.boat_p2 = list
-
+                        x.boat_for_player[self.player - 1] = list
                     if len(list) > 1:
                         self.active_boat_list[length] -= 1
         self.next()
 
     def next(self):
-        if self.active_boat_list is self.boats_list_p1:
+        for x in self.tiles:
+            if x.selected:
+                x.is_boat_tile[self.player - 1] = True
+                x.boat_start = False
+                x.selected = False
+        if self.player == 1:
+            self.button_next_display(f"player {self.other_player} is now placing")
+            self.player = 2
+            self.other_player = 1
             self.active_boat_list = self.boats_list_p2
-            if self.ai:
-                self.ai_selection()
-            else:
-                for x in self.tiles:
-                    self.button_next_display("player 2 is now placing")
-                    if x.selected == True:
-                        x.p1 = True
-                        x.boat_start = False
-                        x.selected = False
         else:
-            for x in self.tiles:
-                if x.selected == True:
-                    x.p2 = True
-                    x.boat_start = False
-                    x.selected = False
+            self.player = 1
+            self.other_player = 2
+            self.active_boat_list = self.boats_list_p1
             self.start_game()
-            self.button_next_display("player 1 is now playing")
 
     def start_game(self):
         for x in self.tiles:
@@ -166,27 +143,35 @@ class Lode(Scene):
         self.sprites.remove(self.tiles)
         self.sprites.add(self.button_next)
 
-    def button_next_click(self, x):
+    def button_next_click(self, tile):
         self.sprites.add(self.tiles)
         self.sprites.remove(self.button_next)
 
-    def neighbour_selected(self, tile):
+    def neighbours(self, tile):
+        return_tiles = pygame.sprite.Group()
         x = tile.x
         y = tile.y
         if x < 9:
-            if self.tiles_list[x + 10*y + 1].selected: return True
+            return_tiles.add(self.tiles_list[x + 10*y + 1])
         if 0 < x:
-            if self.tiles_list[x + 10*y -1].selected: return True
+            return_tiles.add(self.tiles_list[x + 10*y - 1])
         if y < 9:
-            if self.tiles_list[x + 10*y +10].selected: return True
+            return_tiles.add(self.tiles_list[x + 10*y + 10])
         if 0 < y:
-            if self.tiles_list[x + 10*y -10].selected: return True
-        return False
+            return_tiles.add(self.tiles_list[x + 10*y - 10])
+        return return_tiles
+
+    def neighbours_selected(self, tile):
+        return_bool = False
+        for x in self.neighbours(tile):
+            if x.selected:
+                return_bool = True
+        return return_bool
 
     def can_place_boat(self,tile, tile2):
         return_tiles = pygame.sprite.Group()
         if tile2 is None:
-            if tile.selected is False and self.neighbour_selected(tile) is False:
+            if not tile.selected and not self.neighbours_selected(tile):
                 return_tiles.add(tile)
             return return_tiles
         x1, x2 = tile.x, tile2.x
@@ -196,11 +181,11 @@ class Lode(Scene):
         if x2 > x1 and y1 == y2:
             for x in range(x1, x2 + 1):
                 return_tiles.add(self.tiles_list[x + 10*y1])
-                if self.tiles_list[x + 10*y1].selected is True or self.neighbour_selected(self.tiles_list[x + 10*y1]) or self.active_boat_list[x2-x1 +1] <= 0:
+                if self.tiles_list[x + 10*y1].selected or self.neighbours_selected(self.tiles_list[x + 10 * y1]) or self.active_boat_list[x2 - x1 + 1] <= 0:
                     return pygame.sprite.Group()
         elif y2 > y1 and x1 == x2:
             for y in range(y1, y2 + 1):
                 return_tiles.add(self.tiles_list[x1 + 10*y])
-                if self.tiles_list[x1 + 10*y].selected is True or self.neighbour_selected(self.tiles_list[x1 + 10*y]) or self.active_boat_list[y2-y1 +1] <= 0:
+                if self.tiles_list[x1 + 10*y].selected or self.neighbours_selected(self.tiles_list[x1 + 10 * y]) or self.active_boat_list[y2 - y1 + 1] <= 0:
                     return pygame.sprite.Group()
         return return_tiles

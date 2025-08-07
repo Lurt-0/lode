@@ -2,19 +2,16 @@ from  base_sprite import Sprite
 import pygame
 
 class Lode_sprite(Sprite):
-    def __init__(self, rect:pygame.Rect, x, y ,on_click = lambda x: None,on_hover = lambda x: None,not_hover = lambda x: None, text:str = ""):
+    def __init__(self, rect:pygame.Rect, x, y ,on_click = lambda x = None: None,on_hover = lambda x = None: None,not_hover = lambda x = None: None, text:str = ""):
         super().__init__(rect, on_click, on_hover, not_hover, text)
         self.color_selected = pygame.Color(127, 255, 127)
         self.color_hover = pygame.Color("green")
         self.selected = False
-        self.boat_p1 = None
-        self.boat_p2 = None
+        self.boat_for_player = [pygame.sprite.Group, pygame.sprite.Group]
         self.boat_start = False
         self.hover = False
-        self.p1 = False
-        self.p2 = False
-        self.p1_shot = False
-        self.p2_shot = False
+        self.is_boat_tile = [False,False]
+        self.player_shot = [False,False]
         self.x = x
         self.y = y
 
