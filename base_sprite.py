@@ -7,12 +7,13 @@ class Sprite(pygame.sprite.Sprite):
         self.on_hover = on_hover
         self.not_hover = not_hover
         self.rect = rect
-        self.color = pygame.Color(0,127,0)
+        self.color = "green"
+        self.hover_color = "red"
         self.text = text
         self.text_size = 20
         self.text_color = pygame.Color("Black")
         self.image = self.create_img(self.rect,self.color,self.text)
-
+        self.hover = False
 
     def create_img(self, rect, color, text = ""):
         img = pygame.Surface(rect.size)
@@ -24,4 +25,7 @@ class Sprite(pygame.sprite.Sprite):
         return img
 
     def update(self):
-        self.image = self.create_img(self.rect, self.color, self.text)
+        if self.hover:
+            self.image = self.create_img(self.rect, self.color_hover, self.text)
+        else:
+            self.image = self.create_img(self.rect, self.color, self.text)
