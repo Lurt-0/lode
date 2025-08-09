@@ -3,7 +3,7 @@ import pygame
 
 class Lode_sprite(Sprite):
     def __init__(self, rect:pygame.Rect, x, y ,on_click = lambda x = None: None,on_hover = lambda x = None: None,not_hover = lambda x = None: None, text:str = ""):
-        super().__init__(rect, on_click, on_hover, not_hover, text)
+        super().__init__(rect, text, on_click, on_hover, not_hover)
         self.color_selected =  pygame.Color("green")
         self.color_hover = pygame.Color(127, 255, 127)
         self.selected = False

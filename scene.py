@@ -5,6 +5,8 @@ class Scene:
     def __init__(self, switch:Callable[[int],None]):
         self.switch_scenes = switch
         self.sprites = pygame.sprite.Group()
+        self.screen_color = pygame.Color("black")
+        self.waiting_for_space = False
 
     def on_mouse_down(self, pos):
         for x in self.sprites:
@@ -20,7 +22,7 @@ class Scene:
         x.text_size = 130
 
     def draw(self, screen):
-        screen.fill("black")
+        screen.fill(self.screen_color)
         self.sprites.update()
         self.sprites.draw(screen)
 
@@ -31,8 +33,8 @@ class Scene:
             else:
                 x.not_hover(x)
 
+    def space_pressed(self):
+        pass
+
     def quit(self, x):
         raise SystemExit
-
-    def menu(self, tile):
-        self.switch_scenes(0)
