@@ -6,27 +6,28 @@ class Game:
     def __init__(self):
         pygame.init()
         self.active_scene = None
-        self.screen = pygame.display.set_mode((1920,1080), pygame.FULLSCREEN)
+        self.scale = pygame.display.Info().current_w // 640
+        self.screen = pygame.display.set_mode((self.scale * 640, self.scale * 360), pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.load_scene(0)
         self.waiting = False
 
-    def load_scene(self, id):
+    def load_scene(self, id): #loads the correct scene. Can be called in Scene classes
         if id == 0:
-            self.active_scene = Menu(self.load_scene)
+            self.active_scene = Menu(self.load_scene ,self.scale)
         elif id == 1:
-            self.active_scene = Lode(self.load_scene)
+            self.active_scene = Lode(self.load_scene, self.scale)
         elif id == 2:
-            self.active_scene = Lode(self.load_scene, True)
+            self.active_scene = Lode(self.load_scene, self.scale, True)
         elif id == 3:
-            self.active_scene = Lode(self.load_scene, True)
+            self.active_scene = Menu(self.load_scene, self.scale, True)
         elif id == 4:
-            self.active_scene = Lode(self.load_scene, True)
+            self.active_scene = Menu(self.load_scene, self.scale, True, 2)
 
-    def run(self):
+    def run(self): #the game runs here
         while True:
             self.active_scene.update(pygame.mouse.get_pos())
-            for event in pygame.event.get():
+            for event in pygame.event.get(): #loads and checks all relevant events
                 if event.type == pygame.QUIT:
                     raise SystemExit
 
@@ -37,6 +38,8 @@ class Game:
                     if event.key == pygame.K_SPACE:
                         self.active_scene.space_pressed()
                     if event.key == pygame.K_ESCAPE:
+                        self.active_scene.quit(None)
+                    if event.key == pygame.K_BACKSPACE:
                         self.active_scene = Menu(self.load_scene)
 
             self.active_scene.draw(self.screen)
@@ -45,4 +48,4 @@ class Game:
 
 
 game = Game()
-game.run()
+game.run() #starts the game
