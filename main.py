@@ -5,12 +5,11 @@ from lode_game import Lode
 class Game:
     def __init__(self):
         pygame.init()
-        self.active_scene = None
-        self.scale = pygame.display.Info().current_w // 640
-        self.screen = pygame.display.set_mode((self.scale * 640, self.scale * 360), pygame.FULLSCREEN)
+        self.active_scene = None # determines what scene is currently shown
+        self.scale = pygame.display.Info().current_w // 640 # finds scale of your display
+        self.screen = pygame.display.set_mode((self.scale * 640, self.scale * 360), pygame.FULLSCREEN) #game display
         self.clock = pygame.time.Clock()
-        self.load_scene(0)
-        self.waiting = False
+        self.load_scene(0) #loads menu
 
     def load_scene(self, id): #loads the correct scene. Can be called in Scene classes
         if id == 0:
@@ -40,7 +39,7 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         self.active_scene.quit(None)
                     if event.key == pygame.K_BACKSPACE:
-                        self.active_scene = Menu(self.load_scene)
+                        self.active_scene = Menu(self.load_scene, self.scale)
 
             self.active_scene.draw(self.screen)
             pygame.display.update()

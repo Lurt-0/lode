@@ -1,7 +1,7 @@
 import pygame
 from collections.abc import Callable
 
-class Scene:
+class Scene: #parrent class for all the scenes
     def __init__(self, switch:Callable[[int],None],scale):
         self.scale = scale
         self.switch_scenes = switch

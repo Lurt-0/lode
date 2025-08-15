@@ -3,7 +3,7 @@ import pygame
 from collections.abc import Callable
 from base_sprite import Sprite
 
-class Menu(Scene):
+class Menu(Scene): #class for the menu scene
     def __init__(self, switch: Callable[[int], None],scale, end = False, player = 1):
         super().__init__(switch,scale)
         self.move_down = 0 #if the menu is winning, moves sprites down
