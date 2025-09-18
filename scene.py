@@ -37,5 +37,8 @@ class Scene: #parrent class for all the scenes
     def space_pressed(self):
         pass
 
+    def tab_pressed(self):
+        pass
+
     def quit(self, x):
         raise SystemExit

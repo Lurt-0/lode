@@ -40,6 +40,8 @@ class Game:
                         self.active_scene.quit(None)
                     if event.key == pygame.K_BACKSPACE:
                         self.active_scene = Menu(self.load_scene, self.scale)
+                    if event.key == pygame.K_TAB:
+                        self.active_scene.tab_pressed()
 
             self.active_scene.draw(self.screen)
             pygame.display.update()
