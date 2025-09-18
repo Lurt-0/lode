@@ -28,7 +28,7 @@ class Lode(Scene): #class for the game scene
                 self.tiles_list.append(tile)
         self.load_sprites()
 
-    def load_sprites(self): #loads all relevant sprites at the start of boat placing
+    def load_sprites(self): #loads all relevant sprites
         self.sprites.add(self.top_display_sprite)
         self.sprites.add(self.boats_remaining)
         self.sprites.add(Sprite(pygame.Rect(0, 61 * self.scale, 170 * self.scale, 25 * self.scale),
@@ -42,8 +42,7 @@ class Lode(Scene): #class for the game scene
             self.sprites.add(Sprite(pygame.Rect(470* self.scale, 61* self.scale, 170 * self.scale, 20* self.scale),"Boats remaining to place:" ,20 * self.scale))
         self.sprites.add(Sprite(pygame.Rect(470* self.scale, 81 * self.scale, 170 * self.scale, 10 * self.scale), "(format length:number of boats)",10 * self.scale))
 
-
-    def selection_tile_hover(self, tile):
+    def selection_tile_hover(self, tile): #determines color of tile while selecting
         for x in self.tiles:
             if x in self.can_place_boat(tile,self.selected_tile) and self.selected_tile is not None: x.hover = True
             else: x.hover = False
@@ -52,10 +51,10 @@ class Lode(Scene): #class for the game scene
         else:
             tile.color = pygame.Color(127, 255, 127)
 
-    def game_tile_hover(self, tile):
+    def game_tile_hover(self, tile): #determines color of tile in game
         tile.color =  pygame.Color(127, 255, 127)
 
-    def selection_tile_click(self, tile):
+    def selection_tile_click(self, tile): #determines what happens on click while selecting
         if not tile.selected and not self.neighbours_selected(tile):
             for x in (list := self.can_place_boat(tile, self.selected_tile)):
                 if  len(list) == 1:
@@ -75,7 +74,7 @@ class Lode(Scene): #class for the game scene
                     else:
                         self.next_player()
 
-    def game_tile_click(self, tile):
+    def game_tile_click(self, tile): #determines what happens on click in game
         if not tile.player_shot[self.player - 1]:
             tile.player_shot[self.player - 1] = True
             tile.selected = True
@@ -102,7 +101,7 @@ class Lode(Scene): #class for the game scene
                     self.top_display_sprite.text = f"Player {self.other_player} is now shoting"
                     self.change_shown_boats()
 
-    def ai_selection(self, tile):
+    def ai_selection(self, tile): #randomly places all the boats
         while sum(self.boat_list[self.player]) > 0:
             length = random.randint(2, 5)
             if self.boat_list[self.player][length] > 0:
@@ -119,7 +118,7 @@ class Lode(Scene): #class for the game scene
         if self.ai and self.player == 2:
             self.ai_selection(None)
 
-    def ai_move(self):
+    def ai_move(self): #mekes ai move
         self.change_shown_boats()
         while self.player == 2:
             if len(self.ai_boat_list) > 0:
@@ -174,7 +173,7 @@ class Lode(Scene): #class for the game scene
                         self.top_display_sprite.text = f"Player {self.other_player} is now shoting"
                         self.change_shown_boats()
 
-    def change_shown_boats(self, show_not_hit_boats = False):
+    def change_shown_boats(self, show_not_hit_boats = False): #changes players or shows preview of your side
         for x in self.tiles:
             if show_not_hit_boats:
                 x.on_click = lambda x: None
@@ -196,7 +195,7 @@ class Lode(Scene): #class for the game scene
                 x.selected = False
         self.player, self.other_player = self.other_player, self.player
 
-    def next_player(self):
+    def next_player(self): #swithes players
         for x in self.tiles:
             x.hover = False
             x.boat_start = False
@@ -216,7 +215,7 @@ class Lode(Scene): #class for the game scene
             self.other_player = 2
             self.start_shooting()
 
-    def start_shooting(self):
+    def start_shooting(self): #activates the game
         self.shooting = True
         self.sprites.empty()
         self.load_sprites()
@@ -224,7 +223,7 @@ class Lode(Scene): #class for the game scene
             x.on_click = self.game_tile_click
             x.on_hover = self.game_tile_hover
 
-    def space_pressed(self):
+    def space_pressed(self): #determines what SPACE does
         if not self.shooting:
             self.ai_selection(None)
         elif self.shooting and not self.my_boats_shown:
@@ -234,16 +233,57 @@ class Lode(Scene): #class for the game scene
             self.change_shown_boats(False)
             self.my_boats_shown = False
 
-    def tab_pressed(self):
+    def tab_pressed(self): #determines what TAB does (shows info)
         if self.info_shown:
             self.sprites.empty()
             self.load_sprites()
             self.info_shown = False
         else:
             self.sprites.empty()
+            self.sprites.add(
+                Sprite(pygame.Rect(0, 0, 640 * self.scale, 60 * self.scale),
+                       "Info:", 60 * self.scale))
+            self.sprites.add(
+                Sprite(pygame.Rect(0, 120 * self.scale, 640 * self.scale, 60 * self.scale),
+                       "Controls:", 60 * self.scale))
+            self.sprites.add(
+                Sprite(pygame.Rect(0, 220 * self.scale, 640 * self.scale, 40 * self.scale),
+                       "press BACKSPACE to return to MENU", 40 * self.scale))
+            self.sprites.add(
+                Sprite(pygame.Rect(0, 260 * self.scale, 640 * self.scale, 40 * self.scale),
+                       "press ESC to quit the game", 40 * self.scale))
+            self.sprites.add(
+                Sprite(pygame.Rect(0, 300 * self.scale, 640 * self.scale, 40 * self.scale),
+                       "press TAB to return", 40 * self.scale))
+            if self.shooting:
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 180 * self.scale, 640 * self.scale, 40 * self.scale),
+                           "press SPACE to show your boats", 40 * self.scale))
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 60 * self.scale, 640 * self.scale, 20 * self.scale),
+                           "you can try to shoot boat by clicking a tile, boats can't be on dark blue tiles", 20 * self.scale))
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 80 * self.scale, 640 * self.scale, 20 * self.scale),
+                           "if you hit it will turn green and if you miss your opponent plays", 20 * self.scale))
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 100 * self.scale, 640 * self.scale, 20 * self.scale),
+                           "you can see, how your opponent is doing by pressing SPACE and on the right", 20 * self.scale))
+            else:
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 180 * self.scale, 640 * self.scale, 40 * self.scale),
+                           "press SPACE automatically place your boats", 40 * self.scale))
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 60 * self.scale, 640 * self.scale, 20 * self.scale),
+                           "place your boats by clicking on the starting and ending tile, where you want to place it", 20 * self.scale))
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 80 * self.scale, 640 * self.scale, 20 * self.scale),
+                           "on the right you can see what boats remain to place", 20 * self.scale))
+                self.sprites.add(
+                    Sprite(pygame.Rect(0, 100 * self.scale, 640 * self.scale, 20 * self.scale),
+                           "if you press SPACE all your boats will be placed randomly", 20 * self.scale))
             self.info_shown = True
 
-    def neighbours(self, tile):
+    def neighbours(self, tile): #helping function, that returns sprite group of neighbouring tiles
         return_tiles = pygame.sprite.Group()
         x = tile.x
         y = tile.y
@@ -257,14 +297,14 @@ class Lode(Scene): #class for the game scene
             return_tiles.add(self.tiles_list[x + 10*y - 10])
         return return_tiles
 
-    def neighbours_selected(self, tile):
+    def neighbours_selected(self, tile): #helping function, that determines if any of neighbouring tiles are selected
         return_bool = False
         for x in self.neighbours(tile):
             if x.selected:
                 return_bool = True
         return return_bool
 
-    def can_place_boat(self,tile, tile2):
+    def can_place_boat(self,tile, tile2): #helping function, that checks if the boat between tile and tile2 is valid and returns all it's tiles
         return_tiles = pygame.sprite.Group()
         if tile2 is None:
             if not tile.selected and not self.neighbours_selected(tile):
