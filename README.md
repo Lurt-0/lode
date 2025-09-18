@@ -1,6 +1,6 @@
 # Lode
 
-A simple card matching game made in Python for a university programming course.
+A two player game made in Python for a university programming course.
 
 ## Documentation
 
