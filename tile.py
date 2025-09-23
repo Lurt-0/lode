@@ -1,5 +1,6 @@
-from  base_sprite import Sprite
 import pygame
+from  base_sprite import Sprite
+
 
 class Tile(Sprite): # class for tiles of the game
     def __init__(self, rect:pygame.Rect, x, y ,on_click = lambda x = None: None,on_hover = lambda x = None: None,not_hover = lambda x = None: None, text:str = "", text_size = 130):

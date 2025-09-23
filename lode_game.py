@@ -1,7 +1,7 @@
 import random
-from scene import Scene
 import pygame
 from collections.abc import Callable
+from scene import Scene
 from base_sprite import Sprite
 from tile import Tile
 
