@@ -16,6 +16,6 @@ You can sellect either 1 Player, where you play against AI or 2 Players, where y
 
 Game has two parts "selection" and "shooting" in selection both players place their boats and while shooting you try to sink all of opponents boats. If you miss the other player plays (AI plays automatically). For more info press TAB while in game.
 
-###Technical description
+### Technical description
 
 The game has two ways of placing boats, in first option you can place boats yourself by clicking two ending tiles of a boat. During this process the game dynamicly checks, that your boat placment is valid, and if it is the game dysplays, where the boat will be. In second option the game randomly sellects tile, direction and boat lenght and it tryes to place a boat if it can, until all boats are placed. If you choose game for one player, than you will play against AI. Until the AI hits a boat it shoots random valid tiles. When it hits a boat it shoots random neihgbouring tiles and when it hits a second tile and than it continues in that direction, or the opossite, until the whole boat is sunk. After every shot the game checks, if the current player has sunk all the boats, and if he did it loads the ending screen, whitch is modified start screen.
